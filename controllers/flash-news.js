@@ -78,7 +78,13 @@ exports.update = async (req, res) => {
         }
 
         if(statusOnline != undefined) {
-            flash.statusOnline = statusOnline;
+            const f = await flashNewsModel.findByIdAndDelete(req.params.id);
+            return res.status(200).json({
+                message: 'modif réussi',
+                status: 'OK',
+                data: f,
+                statusCode: 201
+            });
         }
 
 

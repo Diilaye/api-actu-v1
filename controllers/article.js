@@ -161,16 +161,14 @@ exports.ActiveArticle = async (req,res) => {
     } = req.body;
 
 
-    const article = await articleModel.findById(req.params.id);
+    const article = await articleModel.findByIdAndDelete(req.params.id);
 
-    article.statusOnline = statusOnline;
-
-    const articleSave = await  article.save();
+    
 
     return res.status(200).json({
         message: 'modification réussi',
         status: 'OK',
-        data: articleSave,
+        data: article,
         statusCode: 201
     });
 
