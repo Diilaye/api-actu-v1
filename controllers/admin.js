@@ -404,17 +404,14 @@ exports.getAuth = async (req, res) => {
 
     try {
 
+    const user = await userModel.findById(req.user.id_user).exec();
 
-        const user = await userModel.findById(req.user.id_user).excec();
-
-        return res.status(200).json({
-            message: 'liste réussi',
-            status: 'OK',
-            data: user,
-            statusCode: 200
-        });
-
-
+    return res.status(200).json({
+        message: 'liste réussi',
+        status: 'OK',
+        data: user,
+        statusCode: 200
+    });
 
     } catch (error) {
 
