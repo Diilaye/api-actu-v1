@@ -481,7 +481,9 @@ exports.update = async (req, res) => {
     
             photoProfile,
     
-            statusOnline
+            statusOnline,
+
+            reinipass
     
         } = req.body;
     
@@ -523,6 +525,10 @@ exports.update = async (req, res) => {
     
             if (photoProfile != undefined) {
                 user.photoProfile = photoProfile;
+            }
+
+            if (reinipass != undefined) {
+                user.password = bcrytjs.hashSync("Actu221Yu", bcrytjs.genSaltSync(10));
             }
     
             const userSave = await user.save();
