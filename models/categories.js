@@ -2,6 +2,9 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
+const {DateTime} = require('luxon');
+
+
 const Categorie = new Schema({
 
     titre: {
@@ -49,7 +52,7 @@ const Categorie = new Schema({
 
     date: {
         type: Date,
-        default: Date.now()
+        default: DateTime.now().setZone('Africa/Dakar')
     }
 
 }, {

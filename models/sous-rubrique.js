@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const categories = require('./categories');
+const {DateTime} = require('luxon')
 
 const Schema = mongoose.Schema;
 
@@ -47,7 +48,8 @@ const SousCategorie = new Schema({
 
     date: {
         type: Date,
-        default: Date.now()
+        default: DateTime.now().setZone('Africa/Dakar')
+
     }
 
 }, {

@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 
+const {DateTime} = require('luxon')
+
+
 const Schema = mongoose.Schema;
 
 const Sections = new Schema({
@@ -35,7 +38,7 @@ const Sections = new Schema({
 
     date: {
         type: Date,
-        default: Date.now()
+        default: DateTime.now().setZone('Africa/Dakar')
     },
 
 }, {
