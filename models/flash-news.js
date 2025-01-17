@@ -30,7 +30,7 @@ const FlashNews = new Schema({
 
     date: {
         type: Date,
-        default:DateTime.now().setZone('Africa/Dakar')
+        default: () => DateTime.now().setZone('Africa/Dakar').toJSDate()
     }
 
 }, {
