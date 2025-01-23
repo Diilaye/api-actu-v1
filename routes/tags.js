@@ -12,7 +12,7 @@ router.put('/:id', require('../controllers/tags').update);
 
 router.delete('/:id', require('../controllers/tags').delete);
 
-router.post('/', require('../middleweares/auth').checkRole('administrateur'),require('../controllers/tags').add);
+router.post('/',  require('../middleweares/auth').checkManyRole(['administrateur','journaliste' ,'redacteur']),require('../controllers/tags').add);
 
 
 
