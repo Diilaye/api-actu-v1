@@ -5,7 +5,8 @@ const Schema = mongoose.Schema;
 const {DateTime} = require('luxon')
 
 
-const AdminModels = new Schema({
+const AdminModels = new Schema(
+    {
 
     service: {
         type: String,
@@ -64,7 +65,8 @@ const AdminModels = new Schema({
          default: DateTime.now().setZone('Africa/Dakar')
     }
 
-}, {
+},
+    {
     toJSON: {
         transform: function (doc, ret) {
             ret.id = ret._id;

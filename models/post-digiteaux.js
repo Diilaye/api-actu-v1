@@ -9,7 +9,7 @@ const PostDigiteaux = new Schema({
 
     type: {
         type: String,
-        enum: ["essentiel", "commercial"],
+        enum: ["essentiel", "commercial" ,"article-top" ,"article-right" ,"categorie-top"],
         default: "essentiel"
     },
 
