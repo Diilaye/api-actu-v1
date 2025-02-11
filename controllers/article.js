@@ -125,7 +125,7 @@ exports.update = async (req,res) => {
 
     article.image = image;
 
-    article.author = req.user.id_user;
+    //article.author = req.user.id_user;
 
 
     const articleSave = await  article.save();
