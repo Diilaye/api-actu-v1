@@ -33,7 +33,7 @@ app.use('/api/v1/journal-papier', require('./routes/journal-papier'));
 app.use('/api/v1/emissions', require('./routes/emission'));
 app.use('/api/v1/articles', require('./routes/articles'));
 app.use('/api/v1/files', require('./routes/file'));
-
+app.use('/api/v1/videos', require('./routes/videoRubriqueRoutes'));
 
 
 require('./config/db')().then(_ => {
