@@ -9,7 +9,8 @@ exports.createVideo = async (req, res) => {
             titre,
             emission,
             url,
-            image
+            image,
+            isLive
         });
 
         await newVideo.save();

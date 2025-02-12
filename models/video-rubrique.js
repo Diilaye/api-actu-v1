@@ -24,6 +24,12 @@ const VideoRubriqueModel = new Schema({
         default: ''
     },
 
+    isLive: {
+        type: String,
+        enum: ["on", "off"],
+        default: "off"
+    },
+
     statusOnline: {
         type: String,
         enum: ["on", "off", "del"],
