@@ -2,8 +2,12 @@ const VideoRubrique = require('../models/video-rubrique');
 
 // ✅ Créer une nouvelle vidéo
 exports.createVideo = async (req, res) => {
+
+
+
     try {
-        const { titre, emission, url, statusOnline } = req.body;
+
+        const { titre, emission, url ,image  , isLive} = req.body;
 
         const newVideo = new VideoRubrique({
             titre,
@@ -14,7 +18,7 @@ exports.createVideo = async (req, res) => {
         });
 
         await newVideo.save();
-        res.status(201).json({ message: "Vidéo ajoutée avec succès", video: newVideo });
+        return  res.status(201).json({ message: "Vidéo ajoutée avec succès", video: newVideo });
 
     } catch (error) {
         res.status(500).json({ message: "Erreur lors de l'ajout de la vidéo", error });
