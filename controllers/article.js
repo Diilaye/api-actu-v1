@@ -246,6 +246,31 @@ exports.topArticle = async (req, res) => {
 
 }
 
+exports.uneArticles = async (req, res) => {
+    try {
+        const articles = await articleModel.find({ typeUne: 'une' })
+            .sort({ date: -1 })  // Trier par date (du plus récent au plus ancien)
+            .limit(5)                  // Garder uniquement les 5 derniers
+            .populate(objectPopulate)
+            .exec();
+
+        return res.status(200).json({
+            message: 'Liste des 5 derniers articles récupérée avec succès',
+            status: 'OK',
+            data: articles,
+            statusCode: 200
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: 'Erreur serveur',
+            status: 'NOT OK',
+            error: error.message,
+            statusCode: 500
+        });
+    }
+};
+
 exports.slug = async (req, res) => {
 
     try {
