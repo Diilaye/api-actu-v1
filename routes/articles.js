@@ -16,7 +16,7 @@ router.get('/articleChoixRedac', require('../controllers/article').articleChoixR
 router.get('/articleSport', require('../controllers/article').articleSport);
 router.get('/articleCulture', require('../controllers/article').articleCulture);
 router.get('/articleAfrique', require('../controllers/article').articleAfrique);
-router.get('/articleInternal', require('../controllers/article').articleInternal);
+router.get('/articleInternational', require('../controllers/article').articleInternational);
 router.get('/article/:slug', require('../controllers/article').slug);
 
 

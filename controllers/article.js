@@ -573,7 +573,7 @@ exports.articleAfrique = async (req, res) => {
     }
 };
 
-exports.articleInternal = async (req, res) => {
+exports.articleInternational = async (req, res) => {
     try {
         const articles = await articleModel.find({categorie: "669d23ad2d40ea6ee75cfc26"  })
             .sort({ date: -1 })  // Trier par date (du plus récent au plus ancien)
