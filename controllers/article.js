@@ -449,7 +449,7 @@ exports.uneInvestigation = async (req, res) => {
 
 exports.articleContribution = async (req, res) => {
     try {
-        const articles = await articleModel.find({categorie: "66a1525888d3a2b60cc75d1b"  , typeUne: { $not: /rubrique/ }})
+        const articles = await articleModel.find({categorie: "66a1525888d3a2b60cc75d1b"})
             .sort({ date: -1 })  // Trier par date (du plus récent au plus ancien)
             .limit(7)                  // Garder uniquement les 5 derniers
             .populate(objectPopulate)
@@ -474,7 +474,7 @@ exports.articleContribution = async (req, res) => {
 
 exports.articleChoixRedac = async (req, res) => {
     try {
-        const articles = await articleModel.find({categorie: "66a1513888d3a2b60cc75d18"  , typeUne: { $not: /rubrique/ }})
+        const articles = await articleModel.find({categorie: "66a1513888d3a2b60cc75d18"})
             .sort({ date: -1 })  // Trier par date (du plus récent au plus ancien)
             .limit(4)                  // Garder uniquement les 5 derniers
             .populate(objectPopulate)
@@ -499,7 +499,7 @@ exports.articleChoixRedac = async (req, res) => {
 
 exports.articleSport = async (req, res) => {
     try {
-        const articles = await articleModel.find({categorie: "669b0b86fe714afd6cf5738f"  , typeUne: { $not: /rubrique/ }})
+        const articles = await articleModel.find({categorie: "669b0b86fe714afd6cf5738f"})
             .sort({ date: -1 })  // Trier par date (du plus récent au plus ancien)
             .limit(5)                  // Garder uniquement les 5 derniers
             .populate(objectPopulate)
@@ -524,7 +524,7 @@ exports.articleSport = async (req, res) => {
 
 exports.articleCulture = async (req, res) => {
     try {
-        const articles = await articleModel.find({categorie: "66a4810c87d32bedea8fa364"  , typeUne: { $not: /rubrique/ }})
+        const articles = await articleModel.find({categorie: "66a4810c87d32bedea8fa364"  })
             .sort({ date: -1 })  // Trier par date (du plus récent au plus ancien)
             .limit(5)                  // Garder uniquement les 5 derniers
             .populate(objectPopulate)
@@ -550,7 +550,7 @@ exports.articleCulture = async (req, res) => {
 
 exports.articleAfrique = async (req, res) => {
     try {
-        const articles = await articleModel.find({categorie: "669b0b98fe714afd6cf57391"  , typeUne: { $not: /rubrique/ }})
+        const articles = await articleModel.find({categorie: "669b0b98fe714afd6cf57391"})
             .sort({ date: -1 })  // Trier par date (du plus récent au plus ancien)
             .limit(5)                  // Garder uniquement les 5 derniers
             .populate(objectPopulate)
@@ -575,7 +575,7 @@ exports.articleAfrique = async (req, res) => {
 
 exports.articleInternal = async (req, res) => {
     try {
-        const articles = await articleModel.find({categorie: "669d23ad2d40ea6ee75cfc26"  , typeUne: { $not: /rubrique/ }})
+        const articles = await articleModel.find({categorie: "669d23ad2d40ea6ee75cfc26"  })
             .sort({ date: -1 })  // Trier par date (du plus récent au plus ancien)
             .limit(5)                  // Garder uniquement les 5 derniers
             .populate(objectPopulate)
