@@ -1,6 +1,86 @@
+
+
 const articleModel = require('../models/article');
 
 const cST = require('../utils/title-to-slug');
+const {Types} = require("mongoose");
+
+const getLookupArticle =  (cat  ,  limit , une = null) => [
+    // 🔍 1. Filtrer les articles par catégorie et typeUne
+    {
+        $match: {
+            categorie: new Types.ObjectId(cat),
+            typeUne: une == null ? {  $ne: "rubrique" } : { $eq: "rubrique" },
+        }
+    },
+    // 🔄 2. Lookup pour récupérer la catégorie
+    {
+        $lookup: {
+            from: "categories",
+            localField: "categorie",
+            foreignField: "_id",
+            as: "categorie"
+        }
+    },
+    { $unwind: { path: "$categorie", preserveNullAndEmptyArrays: true } },
+
+    // 🔄 3. Lookup pour récupérer les tags
+    {
+        $lookup: {
+            from: "tags",
+            localField: "tags",
+            foreignField: "_id",
+            as: "tags"
+        }
+    },
+    { $unwind: { path: "$tags", preserveNullAndEmptyArrays: true } },
+    // 🔄 4. Lookup pour récupérer l'image
+    {
+        $lookup: {
+            from: "media",
+            localField: "image",
+            foreignField: "_id",
+            as: "image"
+        }
+    },
+    { $unwind: { path: "$image", preserveNullAndEmptyArrays: true } },
+
+    // 🔄 5. Lookup pour récupérer l'auteur
+    {
+        $lookup: {
+            from: "user-admin",
+            localField: "author",
+            foreignField: "_id",
+            as: "author"
+        }
+    },
+    { $unwind: { path: "$author", preserveNullAndEmptyArrays: true } },
+
+    // 📅 6. Trier par date décroissante (du plus récent au plus ancien)
+    { $sort: { date: -1 } },
+
+    // 🎯 7. Limiter à 10 articles
+    { $limit: limit },
+
+    // 🛠 8. Projeter les champs souhaités (Optionnel)
+    {
+        $project: {
+            "id": "\$_id",
+            titre: 1,
+            slug: 1,
+            description: 1,
+            typeUne: 1,
+            statusOnline: 1,
+            keyWorod: {titre : 1, slug: 1},
+            date: 1,
+            categorie: {  "id": "\$categorie._id", titre: 1, slug: 1 ,color  : 1, bgColor: 1 },
+            tags: { "id": "\$tags._id", titre: 1, slug: 1 },
+            image: { "id": "\$image._id", url: 1 },
+            author: { "id": "\$author._id", name: 1, email: 1 }
+        }
+    }
+]
+
 
 const objectPopulate = [{
     path: 'author',
@@ -272,37 +352,33 @@ exports.uneArticles = async (req, res) => {
 };
 
 exports.articleActualite = async (req, res) => {
+
     try {
-        const articles = await articleModel.find({categorie: "669b0b3bfe714afd6cf57389"  , typeUne: { $not: /rubrique/ }})
-            .sort({ date: -1 })  // Trier par date (du plus récent au plus ancien)
-            .limit(10)                  // Garder uniquement les 5 derniers
-            .populate(objectPopulate)
-            .exec();
+        const articles = await articleModel.aggregate(getLookupArticle("669b0b3bfe714afd6cf57389" , 10));
 
         return res.status(200).json({
-            message: 'Liste des 5 derniers articles récupérée avec succès',
-            status: 'OK',
+            message: "Liste des articles récupérée avec succès",
+            status: "OK",
             data: articles,
             statusCode: 200
         });
 
     } catch (error) {
         return res.status(500).json({
-            message: 'Erreur serveur',
-            status: 'NOT OK',
+            message: "Erreur serveur",
+            status: "NOT OK",
             error: error.message,
             statusCode: 500
         });
     }
+
 };
+
 
 exports.articlePolitique = async (req, res) => {
     try {
-        const articles = await articleModel.find({categorie: "669b0b67fe714afd6cf5738b"  , typeUne: { $not: /rubrique/ }})
-            .sort({ date: -1 })  // Trier par date (du plus récent au plus ancien)
-            .limit(5)                  // Garder uniquement les 5 derniers
-            .populate(objectPopulate)
-            .exec();
+
+        const articles = await articleModel.aggregate(getLookupArticle("669b0b67fe714afd6cf5738b" , 5));
 
         return res.status(200).json({
             message: 'Liste des 5 derniers articles récupérée avec succès',
@@ -323,12 +399,8 @@ exports.articlePolitique = async (req, res) => {
 
 exports.unePolitique = async (req, res) => {
     try {
-        const articles = await articleModel.find({categorie: "669b0b67fe714afd6cf5738b"  , typeUne:  "rubrique" })
-            .sort({ date: -1 })  // Trier par date (du plus récent au plus ancien)
-            .limit(1)                  // Garder uniquement les 5 derniers
-            .populate(objectPopulate)
-            .exec();
 
+        const articles = await articleModel.aggregate(getLookupArticle("669b0b67fe714afd6cf5738b" , 1 , "une"));
         return res.status(200).json({
             message: 'Liste des 5 derniers articles récupérée avec succès',
             status: 'OK',
@@ -348,11 +420,7 @@ exports.unePolitique = async (req, res) => {
 
 exports.articleEconomie = async (req, res) => {
     try {
-        const articles = await articleModel.find({categorie: "669b0b7cfe714afd6cf5738d"  , typeUne: { $not: /rubrique/ }})
-            .sort({ date: -1 })  // Trier par date (du plus récent au plus ancien)
-            .limit(5)                  // Garder uniquement les 5 derniers
-            .populate(objectPopulate)
-            .exec();
+        const articles = await articleModel.aggregate(getLookupArticle("669b0b7cfe714afd6cf5738d" , 5));
 
         return res.status(200).json({
             message: 'Liste des 5 derniers articles récupérée avec succès',
@@ -373,11 +441,7 @@ exports.articleEconomie = async (req, res) => {
 
 exports.uneEconomie = async (req, res) => {
     try {
-        const articles = await articleModel.find({categorie: "669b0b7cfe714afd6cf5738d"  , typeUne:  "rubrique" })
-            .sort({ date: -1 })  // Trier par date (du plus récent au plus ancien)
-            .limit(1)                  // Garder uniquement les 5 derniers
-            .populate(objectPopulate)
-            .exec();
+        const articles = await articleModel.aggregate(getLookupArticle("669b0b7cfe714afd6cf5738d" , 1 , 'une'));
 
         return res.status(200).json({
             message: 'Liste des 5 derniers articles récupérée avec succès',
@@ -398,11 +462,7 @@ exports.uneEconomie = async (req, res) => {
 
 exports.articleInvestigation = async (req, res) => {
     try {
-        const articles = await articleModel.find({categorie: "66a1513888d3a2b60cc75d18"  , typeUne: { $not: /rubrique/ }})
-            .sort({ date: -1 })  // Trier par date (du plus récent au plus ancien)
-            .limit(5)                  // Garder uniquement les 5 derniers
-            .populate(objectPopulate)
-            .exec();
+        const articles = await articleModel.aggregate(getLookupArticle("66a1513888d3a2b60cc75d18" , 5 ));
 
         return res.status(200).json({
             message: 'Liste des 5 derniers articles récupérée avec succès',
@@ -423,11 +483,7 @@ exports.articleInvestigation = async (req, res) => {
 
 exports.uneInvestigation = async (req, res) => {
     try {
-        const articles = await articleModel.find({categorie: "66a1513888d3a2b60cc75d18"  , typeUne:  "rubrique" })
-            .sort({ date: -1 })  // Trier par date (du plus récent au plus ancien)
-            .limit(1)                  // Garder uniquement les 5 derniers
-            .populate(objectPopulate)
-            .exec();
+        const articles = await articleModel.aggregate(getLookupArticle("66a1513888d3a2b60cc75d18" , 1,'une' ));
 
         return res.status(200).json({
             message: 'Liste des 5 derniers articles récupérée avec succès',
@@ -449,11 +505,8 @@ exports.uneInvestigation = async (req, res) => {
 
 exports.articleContribution = async (req, res) => {
     try {
-        const articles = await articleModel.find({categorie: "66a1525888d3a2b60cc75d1b"})
-            .sort({ date: -1 })  // Trier par date (du plus récent au plus ancien)
-            .limit(7)                  // Garder uniquement les 5 derniers
-            .populate(objectPopulate)
-            .exec();
+        const articles = await articleModel.aggregate(getLookupArticle("66a1525888d3a2b60cc75d1b" , 7 ));
+
 
         return res.status(200).json({
             message: 'Liste des 5 derniers articles récupérée avec succès',
@@ -474,11 +527,8 @@ exports.articleContribution = async (req, res) => {
 
 exports.articleChoixRedac = async (req, res) => {
     try {
-        const articles = await articleModel.find({categorie: "66a1513888d3a2b60cc75d18"})
-            .sort({ date: -1 })  // Trier par date (du plus récent au plus ancien)
-            .limit(4)                  // Garder uniquement les 5 derniers
-            .populate(objectPopulate)
-            .exec();
+        const articles = await articleModel.aggregate(getLookupArticle("66a1513888d3a2b60cc75d18" , 4 ));
+
 
         return res.status(200).json({
             message: 'Liste des 5 derniers articles récupérée avec succès',
@@ -499,11 +549,7 @@ exports.articleChoixRedac = async (req, res) => {
 
 exports.articleSport = async (req, res) => {
     try {
-        const articles = await articleModel.find({categorie: "669b0b86fe714afd6cf5738f"})
-            .sort({ date: -1 })  // Trier par date (du plus récent au plus ancien)
-            .limit(5)                  // Garder uniquement les 5 derniers
-            .populate(objectPopulate)
-            .exec();
+        const articles = await articleModel.aggregate(getLookupArticle("669b0b86fe714afd6cf5738f" , 5 ));
 
         return res.status(200).json({
             message: 'Liste des 5 derniers articles récupérée avec succès',
@@ -524,11 +570,8 @@ exports.articleSport = async (req, res) => {
 
 exports.articleCulture = async (req, res) => {
     try {
-        const articles = await articleModel.find({categorie: "66a4810c87d32bedea8fa364"  })
-            .sort({ date: -1 })  // Trier par date (du plus récent au plus ancien)
-            .limit(5)                  // Garder uniquement les 5 derniers
-            .populate(objectPopulate)
-            .exec();
+        const articles = await articleModel.aggregate(getLookupArticle("66a4810c87d32bedea8fa364" , 5 ));
+
 
         return res.status(200).json({
             message: 'Liste des 5 derniers articles récupérée avec succès',
@@ -550,11 +593,7 @@ exports.articleCulture = async (req, res) => {
 
 exports.articleAfrique = async (req, res) => {
     try {
-        const articles = await articleModel.find({categorie: "669b0b98fe714afd6cf57391"})
-            .sort({ date: -1 })  // Trier par date (du plus récent au plus ancien)
-            .limit(5)                  // Garder uniquement les 5 derniers
-            .populate(objectPopulate)
-            .exec();
+        const articles = await articleModel.aggregate(getLookupArticle("669b0b98fe714afd6cf57391" , 5 ));
 
         return res.status(200).json({
             message: 'Liste des 5 derniers articles récupérée avec succès',
@@ -575,11 +614,9 @@ exports.articleAfrique = async (req, res) => {
 
 exports.articleInternational = async (req, res) => {
     try {
-        const articles = await articleModel.find({categorie: "669d23ad2d40ea6ee75cfc26"  })
-            .sort({ date: -1 })  // Trier par date (du plus récent au plus ancien)
-            .limit(5)                  // Garder uniquement les 5 derniers
-            .populate(objectPopulate)
-            .exec();
+        const articles = await articleModel.aggregate(getLookupArticle("669d23ad2d40ea6ee75cfc26" , 5 ));
+
+
 
         return res.status(200).json({
             message: 'Liste des 5 derniers articles récupérée avec succès',
