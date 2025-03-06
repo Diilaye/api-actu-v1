@@ -28,8 +28,14 @@ exports.createVideo = async (req, res) => {
 // ✅ Récupérer toutes les vidéos
 exports.getAllVideos = async (req, res) => {
     try {
-        const videos = await VideoRubrique.find().populate('image').sort({ createdAt: -1 }); // Trier par date décroissante
-        res.status(200).json(videos);
+        const videos = await VideoRubrique.find().populate('image').sort({ createdAt: -1 });
+        res.status(200).json({
+            message: 'Liste des 5 derniers articles récupérée avec succès',
+            status: 'OK',
+            data: videos,
+            statusCode: 200
+        });
+
     } catch (error) {
         res.status(500).json({ message: "Erreur lors de la récupération des vidéos", error });
     }
