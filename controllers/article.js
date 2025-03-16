@@ -462,7 +462,7 @@ exports.uneEconomie = async (req, res) => {
 
 exports.articleInvestigation = async (req, res) => {
     try {
-        const articles = await articleModel.aggregate(getLookupArticle("66a1513888d3a2b60cc75d18" , 5 ));
+        const articles = await articleModel.aggregate(getLookupArticle("669d23ed2d40ea6ee75cfc2f" , 5 ));
 
         return res.status(200).json({
             message: 'Liste des 5 derniers articles récupérée avec succès',
@@ -483,7 +483,7 @@ exports.articleInvestigation = async (req, res) => {
 
 exports.uneInvestigation = async (req, res) => {
     try {
-        const articles = await articleModel.aggregate(getLookupArticle("66a1513888d3a2b60cc75d18" , 1,'une' ));
+        const articles = await articleModel.aggregate(getLookupArticle("669d23ed2d40ea6ee75cfc2f" , 1,'une' ));
 
         return res.status(200).json({
             message: 'Liste des 5 derniers articles récupérée avec succès',
