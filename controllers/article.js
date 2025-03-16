@@ -5,7 +5,7 @@ const articleModel = require('../models/article');
 const cST = require('../utils/title-to-slug');
 const {Types} = require("mongoose");
 
-const getLookupArticle =  (cat  ,  limit , une = null) => [
+const getLookupArticle =  (cat  ,  limit , une = null , skip = 0) => [
     // 🔍 1. Filtrer les articles par catégorie et typeUne
     {
         $match: {
@@ -62,6 +62,9 @@ const getLookupArticle =  (cat  ,  limit , une = null) => [
     // 🎯 7. Limiter à 10 articles
     { $limit: limit },
 
+    // 🎯 7. Limiter à 10 articles
+    { $skip: skip },
+
     // 🛠 8. Projeter les champs souhaités (Optionnel)
     {
         $project: {
@@ -76,7 +79,11 @@ const getLookupArticle =  (cat  ,  limit , une = null) => [
             categorie: {  "id": "\$categorie._id", titre: 1, slug: 1 ,color  : 1, bgColor: 1 },
             tags: { "id": "\$tags._id", titre: 1, slug: 1 },
             image: { "id": "\$image._id", url: 1 },
-            author: { "id": "\$author._id", name: 1, email: 1 }
+            author: {
+                id: "$author._id",
+                nom: "$author.nom",
+                prenom: "$author.prenom"
+            }
         }
     }
 ]
@@ -364,12 +371,57 @@ exports.uneArticles = async (req, res) => {
 exports.articleActualite = async (req, res) => {
 
     try {
-        const articles = await articleModel.aggregate(getLookupArticle("669b0b3bfe714afd6cf57389" , 10));
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = parseInt(req.query.pageSize) || 13;
+        const skip = (page - 1) * pageSize;
+        // Compter le nombre total de documents
+        const totalProduits = await articleModel.countDocuments({ categorie: new Types.ObjectId("669b0b3bfe714afd6cf57389")});
+
+        const articles = await articleModel.aggregate(getLookupArticle("669b0b3bfe714afd6cf57389" , pageSize , null, skip));
 
         return res.status(200).json({
             message: "Liste des articles récupérée avec succès",
             status: "OK",
             data: articles,
+            totalPages: Math.ceil(totalProduits / pageSize),
+            page,
+            pageSize,
+            statusCode: 200
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "Erreur serveur",
+            status: "NOT OK",
+            error: error.message,
+            statusCode: 500
+        });
+    }
+
+};
+
+exports.articleCategorie = async (req, res) => {
+
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = parseInt(req.query.pageSize) || 13;
+        const skip = (page - 1) * pageSize;
+        const catId= req.query.categorie;
+        // Compter le nombre total de documents
+        const totalProduits = await articleModel.countDocuments({ categorie: new Types.ObjectId(req.query.categorie)});
+
+       // const articles = await articleModel.aggregate(getLookupArticle(req.query.categorie , pageSize , null, skip));
+
+        const articles = await articleModel.find({categorie :req.query.categorie }).sort({ date: -1 }).skip(skip)  // Trier par date (du plus récent au plus ancien)
+            .limit(pageSize).populate(objectPopulate).exec();
+
+        return res.status(200).json({
+            message: "Liste des articles récupérée avec succès",
+            status: "OK",
+            data: articles,
+            totalPages: Math.ceil(totalProduits / pageSize),
+            page,
+            pageSize,
             statusCode: 200
         });
 
