@@ -119,16 +119,16 @@ exports.one = async (req, res) => {
 
 exports.slug = async (req, res) => {
 
+
+
     try {
 
-        console.log(req.params.name);
-        
-
         const categorie = await categorieModel.find({
-            titre : req.params.slug.toUpperCase()
+            slug : req.params.slug.toUpperCase()
         }).exec();
 
-        
+
+
 
         const sousRubriques = await sousCategorieModel.find({
             categorie: categorie[0].id
@@ -144,11 +144,12 @@ exports.slug = async (req, res) => {
             status: 'OK',
             data: {
                 "categorie": categorie[0],
-                "sous-rubrique": sousRubriques,
+                "sous-rubrique": sousRubriques ,
                 "articles": articles.reverse()
             },
             statusCode: 200
         });
+
 
     } catch (error) {
 
