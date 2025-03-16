@@ -136,7 +136,7 @@ exports.slug = async (req, res) => {
 
         const articles = await articleModel.find({
             categorie: categorie[0].id
-        }).populate(objectPopulate).exec();
+        }).populate(objectPopulate).limit(100).exec();
 
 
         return res.status(200).json({

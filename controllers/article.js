@@ -271,7 +271,8 @@ exports.all = async (req, res) => {
 
     try {
 
-        const articles = await articleModel.find({}).populate(objectPopulate).exec();
+        const articles = await articleModel.find({}).sort({ date: -1 })  // Trier par date (du plus récent au plus ancien)
+            .limit(100).populate(objectPopulate).sort({ date: -1 }).exec();
 
      
         return res.status(200).json({
