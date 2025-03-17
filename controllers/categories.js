@@ -145,7 +145,7 @@ exports.slug = async (req, res) => {
             data: {
                 "categorie": categorie[0],
                 "sous-rubrique": sousRubriques ,
-                "articles": articles.reverse()
+                "articles": articles
             },
             statusCode: 200
         });
