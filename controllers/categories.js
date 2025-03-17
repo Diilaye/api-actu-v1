@@ -89,7 +89,7 @@ exports.one = async (req, res) => {
 
         const articles = await articleModel.find({
             categorie: req.params.id
-        }).populate(objectPopulate).exec();
+        }).populate(objectPopulate).limit(50).sort({date: -1}).exec();
 
 
         return res.status(200).json({
