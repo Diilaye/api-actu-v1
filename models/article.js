@@ -32,6 +32,11 @@ const Articles = new Schema({
         enum: ["on", "off", "del"],
         default: "on"
     },
+    statut: {
+        type: String,
+        enum: ["publie", "brouillon", "archive"],
+        default: "publie"
+    },
 
     categorie: {
         type: Schema.Types.ObjectId,

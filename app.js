@@ -34,6 +34,8 @@ app.use('/api/v1/emissions', require('./routes/emission'));
 app.use('/api/v1/articles', require('./routes/articles'));
 app.use('/api/v1/files', require('./routes/file'));
 app.use('/api/v1/videos', require('./routes/videoRubriqueRoutes'));
+app.use('/api/v1/live-feed', require('./routes/live-feed'));
+app.use('/api/v1admin', require('./routes/dashboard'));
 
 
 require('./config/db')().then(_ => {

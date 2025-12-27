@@ -11,6 +11,7 @@ const getLookupArticle =  (cat  ,  limit , une = null , skip = 0) => [
         $match: {
             categorie: new Types.ObjectId(cat),
             typeUne: une == null ? {  $ne: "rubrique" } : { $eq: "rubrique" },
+            statut: "publie"
         }
     },
     // 🔄 2. Lookup pour récupérer la catégorie
@@ -124,6 +125,8 @@ exports.add = async (req, res) => {
 
             image,
 
+            statut,
+
 
         } = req.body;
 
@@ -145,6 +148,8 @@ exports.add = async (req, res) => {
         article.keyWorod = keyWorod;
 
         article.image = image;
+
+        article.statut = statut || 'publie';
 
         article.author = req.user.id_user;
 
@@ -192,6 +197,8 @@ exports.update = async (req,res) => {
 
         image,
 
+        statut,
+
 
     } = req.body;
 
@@ -211,6 +218,8 @@ exports.update = async (req,res) => {
     article.keyWorod = keyWorod;
 
     article.image = image;
+
+    if (statut) article.statut = statut;
 
     //article.author = req.user.id_user;
 
@@ -282,9 +291,55 @@ exports.all = async (req, res) => {
         const pageSize = parseInt(req.query.pageSize) || 13;
         const skip = (page - 1) * pageSize;
         // Compter le nombre total de documents
-        const totalProduits = await articleModel.countDocuments();
+        const totalProduits = await articleModel.countDocuments({ statut: 'publie' });
 
-        const articles = await articleModel.find({}).sort({ date: -1 }).skip(skip)  // Trier par date (du plus récent au plus ancien)
+        const articles = await articleModel.find({ statut: 'publie' }).sort({ date: -1 }).skip(skip)  // Trier par date (du plus récent au plus ancien)
+            .limit(pageSize).populate(objectPopulate).exec();
+
+     
+        return res.status(200).json({
+            message: 'liste réussi',
+            status: 'OK',
+            data: articles,
+            totalPages: Math.ceil(totalProduits / pageSize),
+            page,
+            pageSize,
+            statusCode: 200
+        });
+
+    } catch (error) {
+
+        return res.status(404).json({
+            message: 'erreur server ',
+            status: 'NOT OK',
+            data: error,
+            statusCode: 404
+        });
+
+
+    }
+
+
+}
+
+exports.allForAdmin = async (req, res) => {
+
+    try {
+
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = parseInt(req.query.pageSize) || 13;
+        const skip = (page - 1) * pageSize;
+        const statut = req.query.statut || 'all';
+        
+        let filter = {};
+        if (statut !== 'all') {
+            filter.statut = statut;
+        }
+        
+        // Compter le nombre total de documents
+        const totalProduits = await articleModel.countDocuments(filter);
+
+        const articles = await articleModel.find(filter).sort({ date: -1 }).skip(skip)
             .limit(pageSize).populate(objectPopulate).exec();
 
      
@@ -318,7 +373,8 @@ exports.topArticle = async (req, res) => {
     try {
 
         const articles = await articleModel.find({
-            typeUne: 'top'
+            typeUne: 'top',
+            statut: 'publie'
         }).populate(objectPopulate).exec();
 
         return res.status(200).json({
@@ -345,7 +401,7 @@ exports.topArticle = async (req, res) => {
 
 exports.uneArticles = async (req, res) => {
     try {
-        const articles = await articleModel.find({ typeUne: 'une' })
+        const articles = await articleModel.find({ typeUne: 'une', statut: 'publie' })
             .sort({ date: -1 })  // Trier par date (du plus récent au plus ancien)
             .limit(5)                  // Garder uniquement les 5 derniers
             .populate(objectPopulate)
@@ -408,11 +464,11 @@ exports.articleCategorie = async (req, res) => {
         const skip = (page - 1) * pageSize;
         const catId= req.query.categorie;
         // Compter le nombre total de documents
-        const totalProduits = await articleModel.countDocuments({ categorie: new Types.ObjectId(req.query.categorie)});
+        const totalProduits = await articleModel.countDocuments({ categorie: new Types.ObjectId(req.query.categorie), statut: 'publie' });
 
        // const articles = await articleModel.aggregate(getLookupArticle(req.query.categorie , pageSize , null, skip));
 
-        const articles = await articleModel.find({categorie :req.query.categorie }).sort({ date: -1 }).skip(skip)  // Trier par date (du plus récent au plus ancien)
+        const articles = await articleModel.find({categorie :req.query.categorie, statut: 'publie' }).sort({ date: -1 }).skip(skip)  // Trier par date (du plus récent au plus ancien)
             .limit(pageSize).populate(objectPopulate).exec();
 
         return res.status(200).json({
@@ -709,7 +765,8 @@ exports.slug = async (req, res) => {
         
 
         const article = await articleModel.findOne({
-            slug: slug
+            slug: slug,
+            statut: 'publie'
         }).populate(objectPopulate).exec();
 
  

@@ -1,6 +1,7 @@
 const router = new require('express').Router();
 
 router.get('/', require('../controllers/article').all);
+router.get('/admin/all', require('../middleweares/auth').checkManyRole(['administrateur','journaliste' ,'redacteur']), require('../controllers/article').allForAdmin);
 router.get('/top', require('../controllers/article').topArticle);
 router.get('/une', require('../controllers/article').uneArticles);
 router.get('/cat', require('../controllers/article').articleCategorie);
