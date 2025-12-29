@@ -327,7 +327,7 @@ exports.allForAdmin = async (req, res) => {
     try {
 
         const page = parseInt(req.query.page) || 1;
-        const pageSize = parseInt(req.query.pageSize) || 13;
+        const pageSize = parseInt(req.query.pageSize) || 1000; // Augmenté pour afficher tous les articles
         const skip = (page - 1) * pageSize;
         const statut = req.query.statut || 'all';
         
