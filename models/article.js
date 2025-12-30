@@ -9,7 +9,7 @@ const Articles = new Schema({
 
     titre: {
         type: String,
-        require: true,
+        required: true,
         unique: true
     },
 

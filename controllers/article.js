@@ -131,7 +131,7 @@ exports.add = async (req, res) => {
         } = req.body;
 
 
-        const article = articleModel();
+        const article = new articleModel();
 
         article.titre = titre;
 
@@ -166,11 +166,11 @@ exports.add = async (req, res) => {
 
     } catch (error) {
 
-        return res.status(404).json({
+        return res.status(500).json({
             message: 'erreur server ',
             status: 'NOT OK',
             data: error,
-            statusCode: 404
+            statusCode: 500
         });
 
 
@@ -236,11 +236,11 @@ exports.update = async (req,res) => {
 
     } catch (error) {
 
-        return res.status(404).json({
+        return res.status(500).json({
             message: 'erreur server ',
             status: 'NOT OK',
             data: error,
-            statusCode: 404
+            statusCode: 500
         });
 
 
@@ -271,11 +271,11 @@ exports.ActiveArticle = async (req,res) => {
 
     } catch (error) {
 
-        return res.status(404).json({
+        return res.status(500).json({
             message: 'erreur server ',
             status: 'NOT OK',
             data: error,
-            statusCode: 404
+            statusCode: 500
         });
 
 
@@ -309,11 +309,11 @@ exports.all = async (req, res) => {
 
     } catch (error) {
 
-        return res.status(404).json({
+        return res.status(500).json({
             message: 'erreur server ',
             status: 'NOT OK',
             data: error,
-            statusCode: 404
+            statusCode: 500
         });
 
 
@@ -355,11 +355,11 @@ exports.allForAdmin = async (req, res) => {
 
     } catch (error) {
 
-        return res.status(404).json({
+        return res.status(500).json({
             message: 'erreur server ',
             status: 'NOT OK',
             data: error,
-            statusCode: 404
+            statusCode: 500
         });
 
 
@@ -386,11 +386,11 @@ exports.topArticle = async (req, res) => {
 
     } catch (error) {
 
-        return res.status(404).json({
+        return res.status(500).json({
             message: 'erreur server ',
             status: 'NOT OK',
             data: error,
-            statusCode: 404
+            statusCode: 500
         });
 
 
@@ -782,11 +782,11 @@ exports.slug = async (req, res) => {
 
     } catch (error) {
 
-        return res.status(404).json({
+        return res.status(500).json({
             message: 'erreur server ',
             status: 'NOT OK',
             data: error,
-            statusCode: 404
+            statusCode: 500
         });
 
 
